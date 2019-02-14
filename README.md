@@ -1,0 +1,1 @@
+This is a start React application converting currencies using an API. 

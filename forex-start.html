@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Forex Calculator</title>
+    <script src="https://unpkg.com/react@16/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@16/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/babel-standalone@6.15.0/babel.min.js"></script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="text/babel">
+      class Forex extends React.Component{
+        state = { base: 'EUR', rates: {}, amount: 1 }
+
+        handleCurrencyChange = (event) => {
+          const base = event.target.value
+          this.fetchRates(base)
+        }
+
+        handleAmountChange = (event) => {
+          this.setState({ amount: event.target.value })
+        }
+
+        componentDidMount(){
+          const { base } = this.state
+          this.fetchRates(base)
+        }
+
+        fetchRates = (base) => {
+          fetch(`https://api.exchangeratesapi.io/latest?base=${base}`)
+            .then(response => response.json())
+            .then(json => this.setState({ rates: json.rates, base }))
+        }
+
+        render(){
+          return(
+            <React.Fragment>
+              <div>
+                <input type="number" min="0" value={this.state.amount} onChange={this.handleAmountChange}/>
+                <select value={this.state.base} onChange={this.handleCurrencyChange}>
+                  <option value="AUD">AUD</option>
+                  <option value="BGN">BGN</option>
+                  <option value="BRL">BRL</option>
+                  <option value="CAD">CAD</option>
+                  <option value="CHF">CHF</option>
+                  <option value="CNY">CNY</option>
+                  <option value="CZK">CZK</option>
+                  <option value="DKK">DKK</option>
+                  <option value="EUR">EUR</option>
+                  <option value="GBP">GBP</option>
+                  <option value="HKD">HKD</option>
+                  <option value="HRK">HRK</option>
+                  <option value="HUF">HUF</option>
+                  <option value="IDR">IDR</option>
+                  <option value="ILS">ILS</option>
+                  <option value="INR">INR</option>
+                  <option value="ISK">ISK</option>
+                  <option value="JPY">JPY</option>
+                  <option value="KRW">KRW</option>
+                  <option value="MXN">MXN</option>
+                  <option value="MYR">MYR</option>
+                  <option value="NOK">NOK</option>
+                  <option value="NZD">NZD</option>
+                  <option value="PHP">PHP</option>
+                  <option value="PLN">PLN</option>
+                  <option value="RON">RON</option>
+                  <option value="RUB">RUB</option>
+                  <option value="SEK">SEK</option>
+                  <option value="SGD">SGD</option>
+                  <option value="THB">THB</option>
+                  <option value="TRY">TRY</option>
+                  <option value="USD">USD</option>
+                  <option value="ZAR">ZAR</option>
+                </select>
+              </div>
+              <div>
+                <ul>
+                  {
+                    Object
+                      .keys(this.state.rates)
+                      .filter(currency => currency !== this.state.base)
+                      .sort()
+                      .map(currency => {
+                        return(
+                          <li key={currency}>
+                            {currency} {(this.state.amount * this.state.rates[currency]).toFixed(2)}
+                          </li>
+                        )
+                    })
+                  }
+                </ul>
+              </div>
+            </React.Fragment>
+          )
+        }
+      }
+
+      ReactDOM.render(
+        <Forex/>,
+        document.getElementById('root')
+      );
+
+    </script>
+  </body>
